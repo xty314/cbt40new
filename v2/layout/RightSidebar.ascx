@@ -1,0 +1,8 @@
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="RightSidebar.ascx.cs" Inherits="mobile_layout_RightSidebar" %>
+ <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+    <div class="p-3">
+      <h5>Title</h5>
+      <p>Sidebar content</p>
+    </div>
+  </aside>
