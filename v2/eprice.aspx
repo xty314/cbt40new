@@ -1,6 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="eprice.aspx.cs" Inherits="v2_eprice" MasterPageFile="layout/MasterPage.master" %>
 
-<%@ Register Src="layout/ContentHeader.ascx" TagPrefix="uc1" TagName="ContentHeader" %>
+<%@ Register Src="./layout/ContentHeader.ascx" TagPrefix="uc1" TagName="ContentHeader" %>
 <%@Import Namespace="System.Data.SqlClient" %>
 <%@Import Namespace ="System.Data" %>
 <asp:Content ContentPlaceHolderId="AdditionalCSS" runat="server">
@@ -22,20 +22,12 @@
       <div class="card">
         <div class="card-header">
             <div class="row">      <div class="form-group col-12 col-sm-2">
-                    <label for="exampleInputEmail1">Emailasd</label>
-                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
-                  </div>
-                 <div class="form-group col-12 col-sm-2">
                     <label for="exampleInputEmail1">Email address</label>
                     <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
                   </div>
                  <div class="form-group col-12 col-sm-2">
                     <label for="exampleInputEmail1">Email address</label>
-                     <form>
-                           <asp:TextBox ID="TextBox1" runat="server" placeholder="Enter email"></asp:TextBox>
-                     </form>
-                   
-                   
+                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
                   </div>
                  <div class="form-group col-12 col-sm-2">
                     <label for="exampleInputEmail1">Email address</label>
@@ -46,7 +38,12 @@
                     <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
                   </div>
                  <div class="form-group col-12 col-sm-2">
-                     <asp:Button ID="Button1" runat="server" Text="Button" OnClick="Button1_Click" />
+                    <label for="exampleInputEmail1">Email address</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                  </div>
+                 <div class="form-group col-12 col-sm-2">
+                    <label for="exampleInputEmail1">Email address</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
                   </div>
             </div>
   
@@ -82,7 +79,7 @@
                  $.jgrid.defaults.styleUI = 'Bootstrap4';
                  $.jgrid.defaults.iconSet = "Octicons";
                  $("#jqGrid").jqGrid({
-                     url: '/ajax/eprice.ashx',
+                     url: '/ajax/liveedit.ashx',
                      mtype: "GET",
                      
                      datatype: "json",

@@ -11,9 +11,4 @@ public partial class v2_eprice : System.Web.UI.Page
     {
 
     }
-
-    protected void Button1_Click(object sender, EventArgs e)
-    {
-        TextBox1.Text = "rrrr";
-    }
 }

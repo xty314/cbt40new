@@ -27,7 +27,8 @@ public static class Extensions
     public static string Dtb2Json(this DataTable dtb)
     {
     JavaScriptSerializer jss = new JavaScriptSerializer();
-    System.Collections.ArrayList dic = new System.Collections.ArrayList();
+        jss.MaxJsonLength = int.MaxValue;
+        System.Collections.ArrayList dic = new System.Collections.ArrayList();
     foreach (DataRow dr in dtb.Rows)
     {
         System.Collections.Generic.Dictionary<string, object> drow = new System.Collections.Generic.Dictionary<string, object>();
@@ -38,6 +39,7 @@ public static class Extensions
         dic.Add(drow);
 
         }
+     
         //序列化  
         return jss.Serialize(dic);
 }

@@ -2,7 +2,7 @@
 
 <%@ Register Src="./layout/RequiredScript.ascx" TagPrefix="uc1" TagName="RequiredScript" %>
 <%@ Register Src="./layout/Head.ascx" TagPrefix="uc1" TagName="Head" %>
-<%@ Assembly Src="~/common/Myclass.cs" %> 
+<%--<%@ Assembly Src="~/common/Myclass.cs" %> --%>
 
 <!DOCTYPE html>
 <html>

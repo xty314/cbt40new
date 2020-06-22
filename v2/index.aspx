@@ -23,7 +23,7 @@
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form role="form">
+              <form role="form" runat="server">
                 <div class="card-body">
                   <div class="form-group">
                     <label for="exampleInputEmail1">Email address</label>
@@ -74,16 +74,22 @@
           <!--/.col (left) -->
       
         </div>
+          <asp:Panel ID="Panel1" runat="server">sdfsdfsdf</asp:Panel>
         <!-- /.row (main row) -->
       </div><!-- /.container-fluid -->
     </section>
-    <script>
-        $(function () {
-            //Initialize Select2 Elements
-            $('.select2').select2()
-        })
-    </script>
+
   
 
  <!-- /.content -->
+</asp:Content>
+<asp:Content ContentPlaceHolderId="AdditionalJS" runat="server">
+        <script>
+            $(function () {
+                console.log(2)
+                //Initialize Select2 Elements
+                //$('.select2').select2()
+            })
+    </script>
+
 </asp:Content>

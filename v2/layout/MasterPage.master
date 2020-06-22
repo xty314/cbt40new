@@ -26,7 +26,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 </asp:ContentPlaceHolder>
 </head>
 <body class="hold-transition sidebar-mini">
-     <form id="form1" runat="server">
+   
 <div class="wrapper">
   <!-- Navbar -->
  <uc1:Navbar runat="server" ID="Navbar" />
@@ -62,7 +62,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <uc1:Footer runat="server" ID="Footer" />
 </div>
 <!-- ./wrapper -->
-  </form>
+
 <!-- REQUIRED SCRIPTS -->
 
 <uc1:RequiredScript runat="server" ID="RequiredScript" />
