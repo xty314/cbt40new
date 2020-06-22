@@ -12,21 +12,19 @@
 <body class="hold-transition login-page">
    
 
-    
 <div class="login-box">
   <div class="login-logo">
-   <b>Gpos</b>RST40
+   <b>CBT</b>40
   </div>
   <!-- /.login-logo -->
+  
+
   <div class="card">
     <div class="card-body login-card-body">
       <p class="login-box-msg">Sign in to start your session</p>
-        <form runat="server">
-     
-        <div class="input-group mb-3">
-         
+        <form runat="server"> 
+        <div class="input-group mb-3">     
             <asp:TextBox ID="EmailTextBox" runat="server" type="email" class="form-control" placeholder="Email">
-
             </asp:TextBox>
           <div class="input-group-append">
             <div class="input-group-text">
@@ -46,36 +44,32 @@
         <div class="row">
           <div class="col-8">
             <div class="icheck-primary">
-              <input type="checkbox" id="remember">
-              <label for="remember">
+                <asp:CheckBox ID="CheckBox1" runat="server" />
+              <%--<input type="checkbox" id="remember">--%>
+              <label for=<%=CheckBox1.ClientID %>>
                 Remember Me
               </label>
             </div>
           </div>
           <!-- /.col -->
-          <div class="col-4">
-            
+          <div class="col-4">          
           <asp:Button  type="submit" class="btn btn-primary btn-block" ID="SubmitBtn" runat="server" Text="Sign In" OnClick="SubmitBtn_Click"  />
-      
-
           </div>
           <!-- /.col -->
         </div>
-    
         </form>
-
-    
-      <!-- /.social-auth-links -->
-  <%--    <p class="mb-1">
-        <a href="forgot-password.html">I forgot my password</a>
-      </p>
-      <p class="mb-0">
-        <a href="register.html" class="text-center">Register a new membership</a>
-      </p>--%>
     </div>
     <!-- /.login-card-body -->
   </div>
 </div>
+    <%if (IsPostBack){%>
+   
+      <div class="alert alert-danger alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                  <h5><i class="icon fas fa-ban"></i> Alert!</h5>
+                <%=errorMessage %>
+                </div>
+    <%}%>
 <!-- /.login-box -->
 
 <uc1:RequiredScript runat="server" ID="RequiredScript" />

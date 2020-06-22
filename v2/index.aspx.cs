@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 using System.Data;
 using System.Data.SqlClient;
 
-public partial class v2_index : System.Web.UI.Page
+public partial class v2_index : AdminBasePage
 {
    public string kkk = "ddd";
     protected void Page_Load(object sender, EventArgs e)

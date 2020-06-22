@@ -11,19 +11,13 @@ using System.Web.UI.WebControls;
 public partial class mobile_login : System.Web.UI.Page
 {
     protected DBhelper dbhelper = new DBhelper();
+    public int errorCode;
+    public string errorMessage;
     protected void Page_Load(object sender, EventArgs e)
     {
+        
 
-        Response.Write(Common.GetEnumID("card_type", "dealer"));
-        string sc = "select * from code_relations";
-        int i = dbhelper.ExecuteNonQuery(sc);
-        Alex a = new Alex();
-        Response.Write(a.name);
     }
-
-
-
-
 
     protected void SubmitBtn_Click(object sender, EventArgs e)
     {
@@ -31,13 +25,17 @@ public partial class mobile_login : System.Web.UI.Page
         string pwd=PasswordTextBox.Text;
         User user = new User();
         Hashtable loginResult = user.Login(email, pwd);
-        Response.Write(loginResult["islogin"]);
+        errorCode = (int)loginResult["errorCode"];
+        errorMessage = (string)loginResult["message"];
+        Response.Write(Company.m_sCompanyName + "loggedin");
+        Response.Write(Session[Company.m_sCompanyName + "loggedin"]);
+        Response.Write(Common.TS_UserLoggedIn());
+        if ((bool)loginResult["islogin"])
+        {
+            //Common.BackToLastPage();
+            Response.Redirect("./index.aspx");
+        }
 
-        //Response.Write(loginResult.GetType().GetProperty("islogisn").GetValue(loginResult).ToString());
-        
-        string sc = "select * from code_relations where code<1100";
-        DataTable dt = dbhelper.ExecuteDataTable(sc);
-        //Response.Write(dt.ToJson());
 
 
     }

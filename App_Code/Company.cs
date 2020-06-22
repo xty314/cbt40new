@@ -9,6 +9,7 @@ using System.Web;
 public static class Company
 {
     public static string name = "Gpos";
+    public static readonly string m_sCompanyName = Settings.GetSetting("DBname");
 
     //public Company()
     //{

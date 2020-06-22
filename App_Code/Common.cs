@@ -329,22 +329,100 @@ public static class Common
         //	AlertAdmin(s1);
         Response.End();
     }
-    //public static double MyMoneyParse(string s)
-    //{
-    //    Trim(ref s);
-    //    if (s == null || s == "")
-    //        return 0;
+    public static string GetCatAccessGroupString(string card_id)
+    {
+     
 
-    //    double d = 0;
-    //    try
-    //    {
-    //        d = double.Parse(s, NumberStyles.Currency, null);
-    //    }
-    //    catch (Exception e)
-    //    {
-    //        ShowParseException(s);
-    //    }
-    //    return d;
-    //}
+        string sc = " SELECT limit FROM view_limit v JOIN card c ON v.id=c.cat_access_group WHERE c.id=" + card_id;
+        DataTable dt = dbhelper.ExecuteDataTable(sc);
+        if (dt.Rows.Count <= 0)
+        {
+            return "";
+        }
+       
+        return dt.Rows[0]["limit"].ToString();
+    }
+    public static bool TS_UserLoggedIn()
+    {
+        if (Session[Company.m_sCompanyName + "loggedin"] != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+            
+        
+    }
+    public static void RememberLastPage()
+    {
+        string sl = "http";
 
+        if (String.Compare(Request.ServerVariables["HTTPS"].ToString(), "on", true) == 0)
+            sl += "s";
+
+        sl += "://";
+        sl += Request.ServerVariables["SERVER_NAME"];
+        string sPort = Request.ServerVariables["SERVER_PORT"].ToString();
+        if (sPort != "" && sPort != "80")
+            sl += ":" + sPort;
+        sl += Request.ServerVariables["URL"].ToString();
+        sl += "?";
+        sl += Request.ServerVariables["QUERY_STRING"];
+        Session["LastPage"] = sl;
+        //DEBUG("port=", sPort);
+    }
+    public static void BackToLastPage()
+    {
+        string url;
+        string currentURL = Request.ServerVariables["URL"];
+        if (Session["LastPage"] != null)
+        {
+            url = Session["LastPage"].ToString();
+            int p = 0;
+            if (url.IndexOf("checkout.aspx") >= 0)
+            {
+                if (Session[Company.m_sCompanyName + "sales"] != null && (bool)Session[Company.m_sCompanyName + "sales"])
+                {
+                    url = "/sales/pos.aspx";
+                }
+            }
+
+            if (Session["card_type"] != null && Session["card_type"] != "")
+            {
+                if (Session["card_type"].ToString() == "2")
+                {
+                    if (url.IndexOf("/dealer") < 0 && Request.ServerVariables["URL"].ToString().IndexOf("/dealer/login.aspx") >= 0)
+                    {
+                        string tmpURL = Request.ServerVariables["URL"].ToString();
+                        tmpURL = tmpURL.Replace("login.aspx", "");
+                        url = tmpURL;
+                    }
+                    else if (url.IndexOf("/dealer") < 0 && Request.ServerVariables["URL"].ToString().IndexOf("/dealer") < 0)
+                        url = "dealer/";
+                }
+            }
+
+        }
+        else
+        {
+            url = "";
+
+            if (Session["card_type"] != null && Session["card_type"] != "")
+            {
+                if (Session["card_type"].ToString() == "2")
+                {
+                    if ((Request.ServerVariables["URL"].ToString()).IndexOf("/dealer") < 0)
+                        url = "dealer/";
+                }
+            }
+
+            url += "index.aspx";
+        }
+        //	Response.Redirect(url);
+        Response.Write("<meta http-equiv=\"refresh\" content=\"0; URL=" + url + "\">");
+        //Response.Write("<meta http-equiv=\"refresh\" content=\"0; URL=" + url + "\">");
+        //return;
+    }
 }
