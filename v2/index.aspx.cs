@@ -9,12 +9,13 @@ using System.Data.SqlClient;
 
 public partial class v2_index : AdminBasePage
 {
-   public string kkk = "ddd";
+
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (IsPostBack)
+        if (!Common.TS_UserLoggedIn())
         {
-            Response.Write("kkk");
+            Response.Redirect("login.aspx");
+            return;
         }
     }
 

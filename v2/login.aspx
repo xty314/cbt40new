@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="login.aspx.cs" Inherits="mobile_login" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="login.aspx.cs" Inherits="mobile_login"  %>
 
 <%@ Register Src="./layout/RequiredScript.ascx" TagPrefix="uc1" TagName="RequiredScript" %>
 <%@ Register Src="./layout/Head.ascx" TagPrefix="uc1" TagName="Head" %>

@@ -9,14 +9,14 @@ using System.Web;
 public class AdminBasePage : System.Web.UI.Page
 {
 
-    protected virtual void Page_Init(object sender, EventArgs e)
+    protected virtual void Page_Load(object sender, EventArgs e)
     {
         //Common.RememberLastPage();
         //Response.Write(Request.ServerVariables["URL"]);
-        if (!Common.TS_UserLoggedIn())
-        {
-            Response.Redirect("login.aspx");
-            return;
-        }
+        //if (!Common.TS_UserLoggedIn())
+        //{
+        //    Response.Redirect("login.aspx");
+        //    return;
+        //}
     }
 }

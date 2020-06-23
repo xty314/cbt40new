@@ -28,7 +28,11 @@ public partial class mobile_layout_LeftSidebar : System.Web.UI.UserControl
     }
     protected DataTable getSubTable(string id)
     {
-        sc = "select i.name,i.uri from menu_admin_sub s join  menu_admin_id i on s.menu=i.id where s.cat=" +id;
+        sc = @"SELECT i.name,i.uri FROM menu_admin_sub s 
+              JOIN  menu_admin_id i ON s.menu=i.id
+              JOIN menu_admin_access a on a.menu=i.id
+                WHERE s.cat=" +id+" AND a.class=10";
+        //Response.Write(sc);
         DataTable menuSubTable = dbhelper.ExecuteDataTable(sc);
         return menuSubTable;
     }

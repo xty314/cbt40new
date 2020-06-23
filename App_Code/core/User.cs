@@ -116,6 +116,7 @@ public class User
             if (hashP == pass) //check password first
             {
                 Session[Company.m_sCompanyName + "loggedin"] = true;
+            
                 dr = dt.Rows[0];
                 DataRow drl = dr; //login datarow
                 Session["login_card_id"] = dr["id"].ToString();

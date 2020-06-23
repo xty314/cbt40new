@@ -79,7 +79,7 @@
                  $.jgrid.defaults.styleUI = 'Bootstrap4';
                  $.jgrid.defaults.iconSet = "Octicons";
                  $("#jqGrid").jqGrid({
-                     url: '/ajax/liveedit.ashx',
+                     url: '/ajax/eprice.ashx',
                      mtype: "GET",
                      
                      datatype: "json",

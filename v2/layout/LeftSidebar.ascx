@@ -22,7 +22,8 @@
           <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">Alexander Pierce
+          <a href="#" class="d-block">Alexander Pierces
+              <%=Session[Company.m_sCompanyName + "AccessLevel"] %>
               
           </a>
         </div>
