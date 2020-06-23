@@ -115,6 +115,7 @@ public class User
             string hashP = password;                                 
             if (hashP == pass) //check password first
             {
+            string keys = Session.SessionID;
                 Session[Company.m_sCompanyName + "loggedin"] = true;
             
                 dr = dt.Rows[0];

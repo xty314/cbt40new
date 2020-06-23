@@ -12,11 +12,7 @@ public partial class v2_index : AdminBasePage
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!Common.TS_UserLoggedIn())
-        {
-            Response.Redirect("login.aspx");
-            return;
-        }
+        Response.Write(Session.Keys.Count);
     }
 
     protected void Button1_Click(object sender, EventArgs e)

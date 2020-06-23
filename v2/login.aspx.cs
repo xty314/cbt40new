@@ -16,7 +16,7 @@ public partial class mobile_login : System.Web.UI.Page
   
     protected void Page_Load(object sender, EventArgs e)
     {
-       
+
         //bool IsPageRefresh = false;
         ////this section of code checks if the page postback is due to genuine submit by user or by pressing "refresh"
         //if (!IsPostBack)
@@ -34,6 +34,7 @@ public partial class mobile_login : System.Web.UI.Page
         //    ViewState["ViewStateId"] = Session["SessionId"].ToString();
         //}
         //Response.Write(IsPageRefresh);
+        Response.Write(Session[Company.m_sCompanyName + "loggedin"]);
         this.SubmitBtn.Attributes.Add(" onclick ", ClientScript.GetPostBackEventReference
                 (SubmitBtn, " Click ") + " ;this.disabled=true; this.value='loading...'; ");
     }
@@ -46,12 +47,11 @@ public partial class mobile_login : System.Web.UI.Page
         Hashtable loginResult = user.Login(email, pwd);
         errorCode = (int)loginResult["errorCode"];
         errorMessage = (string)loginResult["message"];
-        Response.Write(Common.TS_UserLoggedIn());
-        Response.Write(Session[Company.m_sCompanyName + "loggedin"]);
+  
         if ((bool)loginResult["islogin"])
         {
             //Common.BackToLastPage();
-            //Response.Redirect("./index.aspx");
+            Response.Redirect("./index.aspx",false);
         }
 
 

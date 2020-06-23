@@ -344,14 +344,24 @@ public static class Common
     }
     public static bool TS_UserLoggedIn()
     {
-        if (Session[Company.m_sCompanyName + "loggedin"] != null)
+
+        if (Session[Company.m_sCompanyName + "loggedin"] == null)
+        {
+            return false;
+        }
+        else if ((bool)Session[Company.m_sCompanyName + "loggedin"] != true)
+        {
+            return false;
+        }
+        else if ((bool)Session[Company.m_sCompanyName + "loggedin"] == true)
         {
             return true;
         }
         else
         {
-            return false;
+            return true;
         }
+
             
         
     }
