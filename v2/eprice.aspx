@@ -13,7 +13,7 @@
 
 <asp:Content ContentPlaceHolderId="Header" runat="server">
 
-    <uc1:ContentHeader runat="server" ID="ContentHeader" GTitle="Item List" />
+    <uc1:ContentHeader runat="server" ID="ContentHeader"  />
 
 </asp:Content>
 <asp:Content ContentPlaceHolderId="Content" runat="server">
@@ -21,7 +21,8 @@
     <section class="content">
       <div class="card">
         <div class="card-header">
-            <div class="row">      <div class="form-group col-12 col-sm-2">
+            <div class="row">      
+                <div class="form-group col-12 col-sm-2">
                     <label for="exampleInputEmail1">Email address</label>
                     <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
                   </div>

@@ -20,9 +20,7 @@ public class eprice : IHttpHandler{
 
     string m_type = null;
     bool m_bPhasedOut = false;
-
     string m_sFilter = "0";
-
     bool m_bService = false;
     bool m_bIDCheck = false;
     bool m_bBarcodePriceEach = false;
@@ -37,9 +35,7 @@ public class eprice : IHttpHandler{
     string m_cmd = "";
     public void ProcessRequest (HttpContext context) {
         context.Response.ContentType = "text/plain";
-
         int page,rows;
-
         if (context.Request.QueryString["page"] == null)
         {
             page = 1;

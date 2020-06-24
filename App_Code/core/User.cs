@@ -126,6 +126,7 @@ public class User
                 Session["email"] = dr["email"].ToString();
                 Session["main_card_id"] = dr["main_card_id"].ToString();
                 Session["branch_card_id"] = dr["branch_card_id"].ToString();
+                Session[Company.m_sCompanyName + "AccessLevel"]=dr["access_level"].ToString();
                 Session["employee_access_level"] = dr["access_level"].ToString();
                 Session["customer_access_level"] = dr["customer_access_level"].ToString();
                 Session["login_is_branch"] = false;

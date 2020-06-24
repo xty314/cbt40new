@@ -19,22 +19,51 @@ public partial class mobile_layout_LeftSidebar : System.Web.UI.UserControl
  
     protected void Page_Load(object sender, EventArgs e)
     {
-       
-     
-  
+
+
+        //string accessLevel = Session[Company.m_sCompanyName + "AccessLevel"].ToString();
         sc = "select * from menu_admin_catalog order by seq";
-      
-       menuTable = dbhelper.ExecuteDataTable(sc);
+        //if (accessLevel == "10")
+        //{
+        //    sc = "select * from menu_admin_catalog order by seq";
+        //}
+        //else
+        //{
+        //    sc = "select * from menu_admin_catalog order by seq";
+        //}
+
+        menuTable = dbhelper.ExecuteDataTable(sc);
     }
     protected DataTable getSubTable(string id)
     {
-        sc = @"SELECT i.name,i.uri FROM menu_admin_sub s 
+        //string accessLevel = Session[Company.m_sCompanyName + "AccessLevel"].ToString();
+        string accessLevel = "10";
+        if (accessLevel == "10")
+        {
+            sc = @"SELECT i.name,i.uri FROM menu_admin_sub s 
+              JOIN  menu_admin_id i ON s.menu=i.id
+           
+                WHERE s.cat=" + id ;
+        }
+        else
+        {
+            sc = @"SELECT i.name,i.uri FROM menu_admin_sub s 
               JOIN  menu_admin_id i ON s.menu=i.id
               JOIN menu_admin_access a on a.menu=i.id
-                WHERE s.cat=" +id+" AND a.class=10";
+                WHERE s.cat=" + id + " AND a.class="+accessLevel;
+        }
+       
         //Response.Write(sc);
         DataTable menuSubTable = dbhelper.ExecuteDataTable(sc);
         return menuSubTable;
+    }
+    protected string GetFontawesome(int i)
+    {
+        string[] fontName = { "fa-tachometer-alt","fa-th","fa-copy" ,"fa-chart-pie","fa-tree","fa-edit","fa-table",
+        "fa-calendar-alt","fa-image","fa-envelope","fa-book","fa-plus-square","fa-file"};
+
+        int t = i % fontName.Length;
+        return fontName[t];
     }
 
 }

@@ -11,15 +11,20 @@ public class AdminBasePage : System.Web.UI.Page
 
     protected virtual void Page_Init(object sender, EventArgs e)
     {
-        if(Session[Company.m_sCompanyName + "loggedin"] == null)
-        {
-            Response.Redirect("login.aspx", false);
-        }
-       else if((bool)Session[Company.m_sCompanyName + "loggedin"]!=true)
-        {
-            Response.Redirect("login.aspx", false);
-        }
 
-  
+        if (!Common.TS_UserLoggedIn())
+        {
+            Response.Redirect("login.aspx", false);
+        }
+        // if(Session[Company.m_sCompanyName + "loggedin"] == null)
+        // {
+        //     Response.Redirect("login.aspx", false);
+        // }
+        //else if((bool)Session[Company.m_sCompanyName + "loggedin"]!=true)
+        // {
+        //     Response.Redirect("login.aspx", false);
+        // }
+
+
     }
 }

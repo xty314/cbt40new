@@ -10,8 +10,12 @@ using System.Web;
 /// </summary>
 public  class Settings
 {
-    
-  
+
+    /// <summary>
+    /// reading configuration from /appSettings.json
+    /// </summary>
+    /// <param name="key"> the "key" in the appSettings.json</param>
+    /// <returns></returns>
     public static  string GetSetting(string key)
     {
         string appSettings = System.Web.HttpContext.Current.Server.MapPath("~/") + "/appSettings.json";

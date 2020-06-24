@@ -5,17 +5,18 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
+using System.Web.SessionState;
 
 /// <summary>
 /// Common 的摘要说明
 /// 公用的static function ，内容整理取自原common.cs 
 /// </summary>
-public static class Common
+public  class Common
 {
-  private static  System.Web.HttpRequest Request = HttpContext.Current.Request;
-    private static System.Web.HttpResponse Response  = HttpContext.Current.Response;
-    private static System.Web.SessionState.HttpSessionState Session = HttpContext.Current.Session;
-    private static DBhelper dbhelper = new DBhelper();
+  //private   HttpRequest Request = HttpContext.Current.Request;
+  //  private  HttpResponse Response  = HttpContext.Current.Response;
+  //  private  HttpSessionState Session = HttpContext.Current.Session;
+  //  private  DBhelper dbhelper = new DBhelper();
     /// <summary>
     /// 获得EnumId
     /// </summary>
@@ -25,7 +26,7 @@ public static class Common
     public static string GetEnumID(string sClass, string sValue)
     {
         DataSet dsEnum = new DataSet();
-      
+        DBhelper dbhelper = new DBhelper();
         string sc = "SELECT id FROM enum WHERE class=@class AND name=@name";
         SqlCommand cmd = dbhelper.GetSqlStringCommond(sc);
         dbhelper.AddInParameter(cmd, "@class", sClass);
@@ -37,7 +38,7 @@ public static class Common
     public static string p(string key)
     {
        //System.Web.HttpResponse Response;
-       System.Web.HttpRequest Request=HttpContext.Current.Request;
+     HttpRequest Request=HttpContext.Current.Request;
     string sRet = "";
         if (key == null || key == "")
             return sRet;
@@ -50,6 +51,7 @@ public static class Common
     }
    public static string g(string key)
     {
+        HttpRequest Request = HttpContext.Current.Request;
         string sRet = "";
         if (key == null || key == "")
             return sRet;
@@ -81,6 +83,8 @@ public static class Common
 
         if (bUpdate || bDelete || bDrop || bCreate || bSelect || bQuote)
         {
+            HttpRequest Request = HttpContext.Current.Request;
+            HttpSessionState Session = HttpContext.Current.Session;
             string manager_email = GetSiteSettings("manager_email", "alert@eznz.com");
             string ip = Request.ServerVariables["REMOTE_ADDR"]; //cache ip
             string rip = ""; //real ip
@@ -114,7 +118,16 @@ public static class Common
     {
         return GetSiteSettings(name, "");
     }
-
+    public static void test()
+    {
+        HttpSessionState Session = HttpContext.Current.Session;
+        Session["t"] = "dd";
+        HttpResponse Response = HttpContext.Current.Response;
+        //string t = Session[Company.m_sCompanyName + "loggedin"].ToString();
+        Response.Write(Session["t"]);
+        Response.Write(Session[Company.m_sCompanyName + "loggedin"]);
+        Response.Write("from common");
+    }
     public static string GetSiteSettings(string name, string sDefault)
     {
         return GetSiteSettings(name, sDefault, false);
@@ -132,7 +145,7 @@ public static class Common
         sc += name;
         sc += "'";
         int rows = 0;
-      
+        DBhelper dbhelper = new DBhelper();
         DataTable dt = dbhelper.ExecuteDataTable(sc);
         rows = dt.Rows.Count;
         if (rows > 0)
@@ -173,7 +186,7 @@ public static class Common
     }
    public static string TSGetUserCompanyByID(string id) //get user name from account table according to user id
     {
-      
+        DBhelper dbhelper = new DBhelper();
         string sc = "SELECT company, trading_name FROM card WHERE id='" + id + "'";
         DataTable dt = dbhelper.ExecuteDataTable(sc);
         int rows = dt.Rows.Count;
@@ -322,6 +335,7 @@ public static class Common
     }
     public static void ShowParseException(string s)
     {
+         HttpResponse Response  = HttpContext.Current.Response;
         string s1 = "<br><br><center><h3>Error, input string \"<font color=red>" + s + "</font>\" was not in a correct format</h3></center>";
         s1 += Environment.StackTrace;
         Response.Write(s1);
@@ -331,8 +345,8 @@ public static class Common
     }
     public static string GetCatAccessGroupString(string card_id)
     {
-     
 
+        DBhelper dbhelper = new DBhelper();
         string sc = " SELECT limit FROM view_limit v JOIN card c ON v.id=c.cat_access_group WHERE c.id=" + card_id;
         DataTable dt = dbhelper.ExecuteDataTable(sc);
         if (dt.Rows.Count <= 0)
@@ -345,21 +359,22 @@ public static class Common
     public static bool TS_UserLoggedIn()
     {
 
-        if (Session[Company.m_sCompanyName + "loggedin"] == null)
-        {
-            return false;
-        }
-        else if ((bool)Session[Company.m_sCompanyName + "loggedin"] != true)
-        {
-            return false;
-        }
-        else if ((bool)Session[Company.m_sCompanyName + "loggedin"] == true)
+        HttpSessionState Session = HttpContext.Current.Session;
+        if (Session[Company.m_sCompanyName + "loggedin"] != null)
         {
             return true;
         }
+        //else if ((bool)Session[Company.m_sCompanyName + "loggedin"] != true)
+        //{
+        //    return false;
+        //}
+        //else if ((bool)Session[Company.m_sCompanyName + "loggedin"] == true)
+        //{
+        //    return true;
+        //}
         else
         {
-            return true;
+            return false;
         }
 
             
@@ -367,8 +382,11 @@ public static class Common
     }
     public static void RememberLastPage()
     {
+          HttpRequest Request = HttpContext.Current.Request;
+         HttpResponse Response  = HttpContext.Current.Response;
+         HttpSessionState Session = HttpContext.Current.Session;
         string sl = "http";
-
+        
         if (String.Compare(Request.ServerVariables["HTTPS"].ToString(), "on", true) == 0)
             sl += "s";
 
@@ -386,6 +404,9 @@ public static class Common
     public static void BackToLastPage()
     {
         string url;
+        HttpRequest Request = HttpContext.Current.Request;
+        HttpResponse Response = HttpContext.Current.Response;
+        HttpSessionState Session = HttpContext.Current.Session;
         string currentURL = Request.ServerVariables["URL"];
         if (Session["LastPage"] != null)
         {

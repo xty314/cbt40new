@@ -2,13 +2,7 @@
 <%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="mobile_MasterPage" %>
 
 
-<%@ Register Src="./LeftSidebar.ascx" TagPrefix="uc1" TagName="LeftSidebar" %>
-<%@ Register Src="./ContentHeader.ascx" TagPrefix="uc1" TagName="ContentHeader" %>
-<%@ Register Src="./RightSidebar.ascx" TagPrefix="uc1" TagName="RightSidebar" %>
-<%@ Register Src="./Footer.ascx" TagPrefix="uc1" TagName="Footer" %>
-<%@ Register Src="./Navbar.ascx" TagPrefix="uc1" TagName="Navbar" %>
-<%@ Register Src="./Head.ascx" TagPrefix="uc1" TagName="Head" %>
-<%@ Register Src="./RequiredScript.ascx" TagPrefix="uc1" TagName="RequiredScript" %>
+<%@ Register Src="LeftSidebar.ascx" TagPrefix="uc1" TagName="LeftSidebar" %><%@ Register Src="ContentHeader.ascx" TagPrefix="uc1" TagName="ContentHeader" %><%@ Register Src="RightSidebar.ascx" TagPrefix="uc1" TagName="RightSidebar" %><%@ Register Src="Footer.ascx" TagPrefix="uc1" TagName="Footer" %><%@ Register Src="Navbar.ascx" TagPrefix="uc1" TagName="Navbar" %><%@ Register Src="Head.ascx" TagPrefix="uc1" TagName="Head" %><%@ Register Src="RequiredScript.ascx" TagPrefix="uc1" TagName="RequiredScript" %>
 
 
 
@@ -25,7 +19,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 </asp:ContentPlaceHolder>
 </head>
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed ">
    
 <div class="wrapper">
   <!-- Navbar -->
@@ -35,23 +29,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <uc1:LeftSidebar runat="server" id="LeftSidebar" />
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
-  
-    
-     
-            <!-- Content Header (Page header) -->
-             <asp:ContentPlaceHolder id="Header" runat="server">      
-
+    <!-- Content Header (Page header) -->
+        <asp:ContentPlaceHolder id="Header" runat="server">      
         </asp:ContentPlaceHolder>
-  
     <!-- /.content-header -->
-   
           <!-- Main content -->
         <asp:ContentPlaceHolder id="Content" runat="server">      
-
         </asp:ContentPlaceHolder>
      <!-- /.content -->
-  
-
   </div>
   <!-- /.content-wrapper -->
   <!-- Control Sidebar -->
