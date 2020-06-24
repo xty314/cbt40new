@@ -34,7 +34,7 @@ public partial class mobile_login : System.Web.UI.Page
         //    ViewState["ViewStateId"] = Session["SessionId"].ToString();
         //}
         //Response.Write(IsPageRefresh);
-        Response.Write(Session[Company.m_sCompanyName + "loggedin"]);
+       
         this.SubmitBtn.Attributes.Add(" onclick ", ClientScript.GetPostBackEventReference
                 (SubmitBtn, " Click ") + " ;this.disabled=true; this.value='loading...'; ");
     }

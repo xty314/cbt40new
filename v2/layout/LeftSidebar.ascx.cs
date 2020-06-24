@@ -65,6 +65,18 @@ public partial class mobile_layout_LeftSidebar : System.Web.UI.UserControl
         int t = i % fontName.Length;
         return fontName[t];
     }
+    protected string UseNewVersionMenu(string submenu)
+    {
+        string[] newMenu = { "eprice.aspx?", "ec.aspx" };
+        if (Array.IndexOf(newMenu, submenu) != -1)
+        {
+            return "/v2/" + submenu;
+        }
+        else
+        {
+            return "/admin/" + submenu;
+        }
 
+    }
 }
 

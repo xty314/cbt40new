@@ -42,7 +42,7 @@
                       %>
                  <li class="nav-item has-treeview ">
             <a href="#" class="nav-link 
-               <%-- active--%>
+              <%--active--%>
                 ">
               <i class="nav-icon fas <%=GetFontawesome(i) %>"></i>
               <p>
@@ -57,7 +57,7 @@
                       {
                          %>
                           <li class="nav-item">
-                            <a href=<%="/admin/"+subMenu["uri"]%> class="nav-link">
+                            <a href=<%= UseNewVersionMenu(subMenu["uri"].ToString())%> class="nav-link ">
                               <i class="far fa-circle nav-icon"></i>
                               <p><%=subMenu["name"]%></p>
                             </a>

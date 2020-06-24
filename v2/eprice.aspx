@@ -19,6 +19,14 @@
 <asp:Content ContentPlaceHolderId="Content" runat="server">
    <!-- Main content -->
     <section class="content">
+        <div class="row">
+         <div class="form-group col-12 col-sm-2">
+                   <input type="button" name="name" value="button" />
+                  </div>
+            
+         
+            
+        </div>
       <div class="card">
         <div class="card-header">
             <div class="row">      
@@ -34,10 +42,12 @@
                     <label for="exampleInputEmail1">Email address</label>
                     <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
                   </div>
-                 <div class="form-group col-12 col-sm-2">
-                    <label for="exampleInputEmail1">Email address</label>
-                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
-                  </div>
+               <div class="form-group form-floating-group mt-4">
+        <input type="text" id="name" class="form-control" required>
+        <label class="form-control-placeholder" for="name">Nsdfsdf</label>
+      </div>
+
+
                  <div class="form-group col-12 col-sm-2">
                     <label for="exampleInputEmail1">Email address</label>
                     <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
@@ -50,7 +60,7 @@
   
         </div>
         <!-- /.card-header -->
-        <div class="card-body">
+        <div class="card-body" id="gridwrap">
            <table id="jqGrid"></table>
             <div id="jqGridPager"></div>
         </div>
@@ -67,16 +77,9 @@
      <script src="plugins/jqgrid/js/jquery.jqGrid.min.js"></script>
          <script type="text/javascript"> 
              $(document).ready(function () {
-                 //$(window).resize(function () {
-                 //    var outerwidth = $('#grid').width();
-                 //    $('#list').setGridWidth(outerwidth); // setGridWidth method sets a new width to the grid dynamically
-                 //});
-                 $(window).on("resize", function () {
-                     var $grid = $("#jqGrid"),
-                         newWidth = $grid.closest(".ui-jqgrid").parent().width();
-                     $grid.jqGrid("autoWidth", false);
-                 });
-                 //$.jgrid.defaults.responsive = true;
+                 //var width = $("#gridwrap").width();
+             
+              
                  $.jgrid.defaults.styleUI = 'Bootstrap4';
                  $.jgrid.defaults.iconSet = "Octicons";
                  $("#jqGrid").jqGrid({
@@ -97,9 +100,10 @@
                      //menubar: true,
                      viewrecords: true,
                      altRows: true,
-                     autowidth: true,
+                     //autowidth: true,
                      hoverrows: true,
                      height: "auto",
+                     //width:width,
                      responsive:true,
                      rowNum: 10,
                      rowList: [10, 20, 100],
@@ -142,8 +146,9 @@
                          showQuery: true
                      } // search options - define multiple search
                  );
-             });
 
+             });
+         
 
    </script>
 </asp:Content>
