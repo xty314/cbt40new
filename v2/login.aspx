@@ -1,7 +1,11 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="login.aspx.cs" Inherits="mobile_login"  EnableSessionState="True"  %>
 
-<%@ Register Src="./layout/RequiredScript.ascx" TagPrefix="uc1" TagName="RequiredScript" %>
-<%@ Register Src="./layout/Head.ascx" TagPrefix="uc1" TagName="Head" %>
+
+
+<%@ Register Src="~/MasterPage/layout/RequiredScript.ascx" TagPrefix="uc1" TagName="RequiredScript" %>
+<%@ Register Src="~/MasterPage/layout/Head.ascx" TagPrefix="uc1" TagName="Head" %>
+
+
 <%--<%@ Assembly Src="~/common/Myclass.cs" %> --%>
 
 <!DOCTYPE html>

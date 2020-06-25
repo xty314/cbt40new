@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" validateRequest="false" AutoEventWireup="true" CodeFile="new_task.aspx.cs" Inherits="v2_newtask" MasterPageFile="layout/MasterPage.master"%>
+﻿<%@ Page Language="C#" validateRequest="false" AutoEventWireup="true" CodeFile="new_task.aspx.cs" Inherits="v2_newtask" MasterPageFile="~/MasterPage/MasterPage.master"%>
 
 <%@ Register Src="layout/ContentHeader.ascx" TagPrefix="uc1" TagName="ContentHeader" %>
 <%--<%@Import Namespace="System.Data.SqlClient" %>

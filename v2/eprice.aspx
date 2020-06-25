@@ -1,13 +1,17 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="eprice.aspx.cs" Inherits="v2_eprice" MasterPageFile="layout/MasterPage.master" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="eprice.aspx.cs" Inherits="v2_eprice" MasterPageFile="~/MasterPage/MasterPage.master" %>
 
-<%@ Register Src="./layout/ContentHeader.ascx" TagPrefix="uc1" TagName="ContentHeader" %>
+
+<%@ Register Src="~/MasterPage/layout/ContentHeader.ascx" TagPrefix="uc1" TagName="ContentHeader" %>
+
+
+
 <%@Import Namespace="System.Data.SqlClient" %>
 <%@Import Namespace ="System.Data" %>
 <asp:Content ContentPlaceHolderId="AdditionalCSS" runat="server">
     <%--<link href="plugins/jqgrid/css/octicons.css" rel="stylesheet" />--%>
     	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/font/octicons.css">
-    <link href="plugins/jqgrid/css/ui.jqgrid-bootstrap4.css" rel="stylesheet" />
-    <link href="plugins/select2/css/select2.min.css" rel="stylesheet" />
+    <link href="/asset/plugins/jqgrid/css/ui.jqgrid-bootstrap4.css" rel="stylesheet" />
+    <link href="/asset/plugins/select2/css/select2.min.css" rel="stylesheet" />
     <%--<link href="plugins/jqgrid/css/responsive.css" rel="stylesheet" />--%>
 </asp:Content>
 
@@ -185,9 +189,9 @@
 </asp:Content>
 
 <asp:Content ContentPlaceHolderId="AdditionalJS" runat="server">
-    <script src="plugins/jqgrid/js/i18n/grid.locale-en.js"></script>
-     <script src="plugins/jqgrid/js/jquery.jqGrid.min.js"></script>
-    <script src="plugins/select2/js/select2.full.min.js"></script>
+    <script src="/asset/plugins/jqgrid/js/i18n/grid.locale-en.js"></script>
+     <script src="/asset/plugins/jqgrid/js/jquery.jqGrid.min.js"></script>
+    <script src="/asset/plugins/select2/js/select2.full.min.js"></script>
          <script type="text/javascript"> 
              $(document).ready(function () {
                 $("#<%=SupplierDropDownList.ClientID%>").select2();

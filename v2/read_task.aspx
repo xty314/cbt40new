@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="read_task.aspx.cs" Inherits="v2_read_task" MasterPageFile="~/v2/layout/MasterPage.master" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="read_task.aspx.cs" Inherits="v2_read_task" MasterPageFile="~/MasterPage/MasterPage.master" %>
 
 
 <%--注意加入MasterPageFile--%>

@@ -1,7 +1,12 @@
 ﻿
-<%@ Page  Language="C#" AutoEventWireup="true" CodeFile="index.aspx.cs" Inherits="v2_index" MasterPageFile="layout/MasterPage.master" %>
+<%@ Page  Language="C#" AutoEventWireup="true" CodeFile="index.aspx.cs" Inherits="v2_index" MasterPageFile="~/MasterPage/MasterPage.master" %>
 
-<%@ Register Src="./layout/ContentHeader.ascx" TagPrefix="uc1" TagName="ContentHeader" %>
+
+
+<%@ Register Src="~/MasterPage/layout/ContentHeader.ascx" TagPrefix="uc1" TagName="ContentHeader" %>
+
+
+
 <%@Import Namespace="System.Data.SqlClient" %>
 <%@Import Namespace ="System.Data" %>
 <asp:Content ContentPlaceHolderId="Header" runat="server">
