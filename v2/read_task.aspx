@@ -3,7 +3,7 @@
 
 <%--注意加入MasterPageFile--%>
 
-<%@ Register Src="./layout/ContentHeader.ascx" TagPrefix="uc1" TagName="ContentHeader" %>
+<%@ Register Src="~/MasterPage/layout/ContentHeader.ascx" TagPrefix="uc1" TagName="ContentHeader" %>
 <%--<%@Import Namespace="System.Data.SqlClient" %>
 <%@Import Namespace ="System.Data" %>--%>
 <asp:Content ContentPlaceHolderId="AdditionalCSS" runat="server">
@@ -19,6 +19,7 @@
 <asp:Content ContentPlaceHolderId="Content" runat="server">
   <!-- Main content -->
          <section class="content">
+             <form runat="server">
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-3">
@@ -201,6 +202,7 @@
         </div>
       <!-- /.row -->
       </div><!-- /.container-fluid -->
+          </form>
     </section>
  <!-- /.content -->
 </asp:Content>

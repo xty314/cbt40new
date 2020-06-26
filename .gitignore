@@ -32,4 +32,5 @@
 /*.css
 /*.js
 /*.gif
+/template
 !/cs/sqlstring.cs

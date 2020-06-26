@@ -1,11 +1,11 @@
 ﻿<%@ Page Language="C#" validateRequest="false" AutoEventWireup="true" CodeFile="new_task.aspx.cs" Inherits="v2_newtask" MasterPageFile="~/MasterPage/MasterPage.master"%>
 
-<%@ Register Src="layout/ContentHeader.ascx" TagPrefix="uc1" TagName="ContentHeader" %>
+<%@ Register Src="~/MasterPage/layout/ContentHeader.ascx" TagPrefix="uc1" TagName="ContentHeader" %>
 <%--<%@Import Namespace="System.Data.SqlClient" %>
 <%@Import Namespace ="System.Data" %>--%>
 <asp:Content ContentPlaceHolderId="AdditionalCSS" runat="server">
    
-    <link href="plugins/summernote/summernote-bs4.min.css" rel="stylesheet" />
+    <link href="/asset/plugins/summernote/summernote-bs4.min.css" rel="stylesheet" />
 </asp:Content>
 
 <asp:Content ContentPlaceHolderId="Header" runat="server">
@@ -17,7 +17,7 @@
   
  
   
-    <script src="plugins/summernote/summernote-bs4.min.js"></script>
+    <script src="/asset/plugins/summernote/summernote-bs4.min.js"></script>
        <%--<script src="adminLTE/js/demo.js"></script>--%>
     <script>
   $(function () {
@@ -27,11 +27,14 @@
 </script>
 </asp:Content>
 <asp:Content ContentPlaceHolderId="Content" runat="server">
-
+ 
   <!-- Main content -->
          <section class="content">
+           <form runat="server">  
       <div class="container-fluid">
+          
         <div class="row">
+                    
           <div class="col-md-3">
             <a href="mailbox.html" class="btn btn-primary btn-block mb-3">Back to Inbox</a>
 
@@ -41,7 +44,7 @@
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              
+             
                 <div class="card-body">
                   <div class="form-group row">
                     <label for="Content_TextBoxCustomer" class="col-sm-6 col-form-label">Customer</label>
@@ -107,7 +110,7 @@
                   <button type="submit" class="btn btn-default float-right">Cancel</button>
                 </div>
                 <!-- /.card-footer -->
-         
+             
             </div>
           </div>
           <!-- /.col -->
@@ -173,9 +176,13 @@
             <!-- /.card -->
           </div>
           <!-- /.col -->
+        
         </div>
+           
         <!-- /.row -->
       </div><!-- /.container-fluid -->
+              </div>
+         </form>
     </section>
  <!-- /.content -->
 </asp:Content>

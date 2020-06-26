@@ -1,6 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="dev_task.aspx.cs" Inherits="v2_dev_task" MasterPageFile="~/MasterPage/MasterPage.master"%>
 
-<%@ Register Src="./layout/ContentHeader.ascx" TagPrefix="uc1" TagName="ContentHeader" %>
+<%@ Register Src="~/MasterPage/layout/ContentHeader.ascx" TagPrefix="uc1" TagName="ContentHeader" %>
 <%@Import Namespace="System.Data.SqlClient" %>
 <%@Import Namespace ="System.Data" %>
 <asp:Content ContentPlaceHolderId="AdditionalCSS" runat="server">

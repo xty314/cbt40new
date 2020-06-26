@@ -12,10 +12,10 @@ public partial class v2_read_task : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        string taskid =Request.QueryString["taskid"];
-        string sc = "SELECT note FROM dev_task_note where id="+taskid;
-        string note = (string)dbhelper.ExecuteScalar(sc);
-        MessageBoard.InnerHtml = note;
+        //string taskid =Request.QueryString["taskid"];
+        //string sc = "SELECT note FROM dev_task_note where id="+taskid;
+        //string note = (string)dbhelper.ExecuteScalar(sc);
+        //MessageBoard.InnerHtml = note;
     }
     //[WebMethod]
     //public static string test(string id)

@@ -5,12 +5,13 @@
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
+       <li class="nav-item d-none d-sm-inline-block">
+        <a href="/v2/index.aspx" class="nav-link">Home</a>
+      </li>
       <li class="nav-item d-none d-sm-inline-block">
         <a href="/template/index.html" class="nav-link" target="_blank">Template</a>
       </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Contact</a>
-      </li>
+
     </ul>
 
     <!-- SEARCH FORM -->
