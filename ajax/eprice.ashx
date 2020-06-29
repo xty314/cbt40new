@@ -8,31 +8,7 @@ using System.Collections;
 using System.IO;
 
 public class eprice : IHttpHandler{
-    string cat;
-    string s_cat;
-    string ss_cat;
-
-    string kw = "";
-
-    int m_iTotalItems = 0;
-
-    string m_editPriceBox = ""; //for edit retail price
-
-    string m_type = null;
-    bool m_bPhasedOut = false;
-    string m_sFilter = "0";
-    bool m_bService = false;
-    bool m_bIDCheck = false;
-    bool m_bBarcodePriceEach = false;
-    bool m_bBarcodePriceKG  = false;
-    bool m_bAutoWeigh = false;
-    bool m_bWebsite =false;
-    bool m_bAccessUpdate = false;
-    bool m_bCoreRange = false;
-    string m_ob = "";
-    string m_desc = "";
-    string m_ph = "";
-    string m_cmd = "";
+ 
     public void ProcessRequest (HttpContext context) {
         context.Response.ContentType = "text/plain";
         int page,rows;

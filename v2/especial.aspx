@@ -1,4 +1,7 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="template.aspx.cs" Inherits="v2_template" MasterPageFile="~/MasterPage/MasterPage.master" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="especial.aspx.cs" Inherits="v2_especial" MasterPageFile="~/MasterPage/MasterPage.master"%>
+
+
+
 
 <%--注意加入MasterPageFile--%>
 
@@ -18,7 +21,7 @@
 <asp:Content ContentPlaceHolderId="Content" runat="server">
 
   <!-- Main content -->
-     
+     <%PrintPage(); %>
  <!-- /.content -->
 </asp:Content>
 <asp:Content ContentPlaceHolderId="AdditionalJS" runat="server">
