@@ -6,12 +6,14 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.SessionState;
+using System.Collections;
+using System.Web.Caching;
 
 /// <summary>
 /// Common 的摘要说明
 /// 公用的static function ，内容整理取自原common.cs 
 /// </summary>
-public  class Common
+public  class Common 
 {
   //private   HttpRequest Request = HttpContext.Current.Request;
   //  private  HttpResponse Response  = HttpContext.Current.Response;
@@ -455,5 +457,67 @@ public  class Common
         Response.Write("<meta http-equiv=\"refresh\" content=\"0; URL=" + url + "\">");
         //Response.Write("<meta http-equiv=\"refresh\" content=\"0; URL=" + url + "\">");
         //return;
+    }
+   public static void TSRemoveCache(string cn) //remove(refresh) cache 
+    {
+
+        //DEBUG("removing cache, m_sCompanyName=" + m_sCompanyName + " cn=", cn);
+        HttpRuntime.Cache.Remove(cn); //remove catalog cache
+
+        //remove all catalog contents cache
+        IDictionaryEnumerator ide = HttpRuntime.Cache.GetEnumerator();
+        if (ide == null)
+            return;
+        for (int i = HttpRuntime.Cache.Count - 1; i >= 0; i--)
+        {
+            ide.MoveNext();
+            string s = ide.Key.ToString();
+            if (s.Length > 7)
+            {
+                if (String.Compare(s.Substring(0, 7), "System.", true) != 0 && String.Compare(s.Substring(0, 5), "ISAPI", true) != 0)
+                {
+                    if (s.Length > Company.m_sCompanyName.Length)
+                    {
+                        if (String.Compare(s.Substring(0, Company.m_sCompanyName.Length), Company.m_sCompanyName, true) == 0)
+                        {
+                            //						if(Cache[s] != null)
+                            //						{
+                            HttpRuntime.Cache.Remove(s);
+                            //							DEBUG(s, " removed");
+                            //						}
+                        }
+                        //					else
+                        //					{
+                        //					DEBUG("sub=", s.Substring(0, 4));
+                        //					}
+                    }
+                }
+            }
+        }
+    }
+
+    public static void TSRemoveCache() //remove(refresh) cache 
+    {
+    
+        
+        IDictionaryEnumerator ide = HttpRuntime.Cache.GetEnumerator();
+        for (int i = HttpRuntime.Cache.Count - 1; i >= 0; i--)
+        {
+            ide.MoveNext();
+            string s = ide.Key.ToString();
+            if (s.Length > 7)
+            {
+                if (String.Compare(s.Substring(0, 7), "System.", true) != 0 && String.Compare(s.Substring(0, 5), "ISAPI", true) != 0)
+                {
+                    if (s.Length > Company.m_sCompanyName.Length)
+                    {
+                        if (String.Compare(s.Substring(0, Company.m_sCompanyName.Length), Company.m_sCompanyName, true) == 0)
+                        {
+                            HttpRuntime.Cache.Remove(s);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

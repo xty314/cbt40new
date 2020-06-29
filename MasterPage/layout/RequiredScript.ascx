@@ -4,7 +4,7 @@
 <!-- Bootstrap 4 -->
 <script src="/asset/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!--fontawesome Font -->
-<script src="/asset/plugins/fontawesome5.13.1/all.min.js"></script>
+<%--<script src="/asset/plugins/fontawesome5.13.1/all.min.js"></script>--%>
 <!-- AdminLTE App -->
 <script src="/asset/plugins/adminlte/js/adminlte.min.js"></script>
 
