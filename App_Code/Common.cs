@@ -13,12 +13,54 @@ using System.Web.Caching;
 /// Common 的摘要说明
 /// 公用的static function ，内容整理取自原common.cs 
 /// </summary>
-public  class Common 
+public class Common
 {
-  //private   HttpRequest Request = HttpContext.Current.Request;
-  //  private  HttpResponse Response  = HttpContext.Current.Response;
-  //  private  HttpSessionState Session = HttpContext.Current.Session;
-  //  private  DBhelper dbhelper = new DBhelper();
+    public static SqlConnectionStringBuilder connbuilder = new SqlConnectionStringBuilder();
+    public static SqlConnection myConnection = new SqlConnection(connbuilder.ConnectionString);
+    static Common(){
+        Common.connbuilder.DataSource = Settings.GetSetting("DataSource");
+        Common.connbuilder.UserID = Settings.GetSetting("DBUser");
+        Common.connbuilder.Password = Settings.GetSetting("DBpwd");
+        Common.connbuilder.InitialCatalog = Settings.GetSetting("DBname");
+        myConnection = new SqlConnection(Common.connbuilder.ConnectionString);
+    }
+
+
+
+
+   public static DataTable dtUser = new DataTable();
+   public static DataSet dstcom = new DataSet();
+
+    public static string m_sHeaderCacheName = "header"; //will append current virtual path later
+    public static string m_sSalesEmail = "";
+    public static  string m_sAdminEmail = "sales@eznz.com";
+    public static string m_supplierString = "";
+    public static string m_catTableString = "";
+    public const int const_sleeps = 1;                 //for throat CPU usage
+    public static int monitorCount = 0;                       //for remote process monitoring
+    public static bool m_bEZNZAdmin = false;
+    public static readonly string m_sCompanyName = Settings.GetSetting("DBname");
+    //public static SqlConnection myConnection= new SqlConnection("Initial Catalog=eznz;data source=" + Settings.GetSetting("DataSource") + ";User id=" + Settings.GetSetting("DBUser")+ ";Password=" + Settings.GetSetting("DBpwd") + ";Integrated Security=false;");
+    public static SqlDataAdapter myAdapter;
+    public static SqlCommand myCommand;
+    public static string m_sCompanyTitle = "";
+    public static bool g_bSystemDemo = true;
+    public static bool g_bRetailVersion = true;
+    public static bool g_bRentalVersion = true;
+    public static bool g_bOrderOnlyVersion = true;
+    public static bool g_bEnableQuotation = false;
+    public static bool g_bSysQuoteAddHardwareLabourCharge = false;
+    public static bool g_bSysQuoteAddSoftwareLabourCharge = false;
+    public static bool g_bDemo = true;
+    public static bool g_bUseSystemQuotation = false;
+    public static string g_cat = "";
+    public static string g_scat = "";
+    public static string g_sscat = "";
+    public static bool g_bUseAVGCost = false;
+    public static bool g_bPDA = false;
+    public static bool g_bIpad = false;
+    public static bool g_bIphone = false;
+    public static bool g_bAccessLoginBranchOnly = false;
     /// <summary>
     /// 获得EnumId
     /// </summary>
@@ -28,15 +70,68 @@ public  class Common
     public static string GetEnumID(string sClass, string sValue)
     {
         DataSet dsEnum = new DataSet();
+        HttpResponse Response = HttpContext.Current.Response;
         DBhelper dbhelper = new DBhelper();
         string sc = "SELECT id FROM enum WHERE class=@class AND name=@name";
         SqlCommand cmd = dbhelper.GetSqlStringCommond(sc);
         dbhelper.AddInParameter(cmd, "@class", sClass);
         dbhelper.AddInParameter(cmd, "@name", sValue);
         DataTable enumTable = dbhelper.ExecuteDataTable(cmd);
+
         string sID = enumTable.Rows[0]["id"].ToString();
         return sID;
     }
+   public static void ShowExp(string query, Exception e)
+    {
+        HttpSessionState Session = HttpContext.Current.Session;
+        HttpResponse Response = HttpContext.Current.Response;
+        HttpRequest Request = HttpContext.Current.Request;
+        {
+            Response.Write("Execute SQL Query Error.<br>\r\nQuery = ");
+            Response.Write(query);
+            Response.Write("<br>\r\n Error: ");
+            Response.Write(e);
+            Response.Write("<br>\r\n");
+
+        }
+
+        string msg = "\r\n<font color=red><b>EXP</b></font><br>\r\n";
+
+        msg += e.ToString();
+        msg += "<br><br><font color=red><b>QUERY</b></font><br>\r\n";
+        msg += query;
+        msg += "<br><br>\r\n\r\n";
+        msg += "ip : " + Session["ip"] + "<br>\r\n";
+        msg += "login : " + Session["name"] + "<br>\r\n";
+        msg += "email : " + Session["email"] + "<br>\r\n";
+        msg += "url : " + Request.ServerVariables["URL"] + "?" + Request.ServerVariables["QUERY_STRING"] + "<br>\r\n";
+
+        //AlertAdmin(msg);
+    }
+   public static bool SetSiteSettings(string name, string value)
+    {
+    
+        string sc = " IF NOT EXISTS (SELECT value FROM settings WHERE name = '" + name + "') ";
+        sc += " INSERT INTO settings(name, value) VALUES('" + name + "', '" + EncodeQuote(value) + "') ";
+        sc += " ELSE UPDATE settings SET value = '" + EncodeQuote(value) + "' WHERE name='" + name + "' ";
+
+        try
+        {
+            myCommand = new SqlCommand(sc);
+            myCommand.Connection = myConnection;
+            myCommand.Connection.Open();
+            myCommand.ExecuteNonQuery();
+            myCommand.Connection.Close();
+        }
+        catch (Exception e)
+        {
+            ShowExp(sc, e);
+            return false;
+        }
+        return true;
+    }
+
+
     public static string p(string key)
     {
        //System.Web.HttpResponse Response;
@@ -120,16 +215,7 @@ public  class Common
     {
         return GetSiteSettings(name, "");
     }
-    public static void test()
-    {
-        HttpSessionState Session = HttpContext.Current.Session;
-        Session["t"] = "dd";
-        HttpResponse Response = HttpContext.Current.Response;
-        //string t = Session[Company.m_sCompanyName + "loggedin"].ToString();
-        Response.Write(Session["t"]);
-        Response.Write(Session[Company.m_sCompanyName + "loggedin"]);
-        Response.Write("from common");
-    }
+
     public static string GetSiteSettings(string name, string sDefault)
     {
         return GetSiteSettings(name, sDefault, false);
@@ -403,6 +489,307 @@ public  class Common
         Session["LastPage"] = sl;
         //DEBUG("port=", sPort);
     }
+    public static bool CheckAccess(string class_id)
+    {
+
+        HttpRequest Request = HttpContext.Current.Request;
+        HttpResponse Response = HttpContext.Current.Response;
+        HttpSessionState Session = HttpContext.Current.Session;
+        if (class_id == GetAccessClassID("Administrator"))
+            return true;
+
+        string uri = Request.ServerVariables["URL"];
+        uri = uri.Substring(0, uri.IndexOf(".aspx") + 5); //strip off parameters
+        int i = uri.Length - 1;
+        for (; i >= 0; i--)
+        {
+            if (uri[i] == '/')
+                break;
+        }
+        uri = uri.Substring(i + 1, uri.Length - i - 1);
+        return CheckAccess(class_id, uri);
+    }
+    public static bool CheckAccess(string class_id, string uri)
+    {
+        HttpSessionState Session = HttpContext.Current.Session;
+        if (class_id == GetAccessClassID("Administrator"))
+            return true;
+
+        if (dstcom.Tables["checkaccess"] != null)
+            dstcom.Tables["checkaccess"].Clear();
+        //DEBUG("class=", class_id);
+        string sc = "SELECT id ";
+        sc += " FROM menu_admin_id ";
+        sc += " WHERE uri LIKE '" + uri + "%' OR sisters LIKE '%" + uri + "%' ";
+        //DEBUG("cs =", sc);
+        try
+        {
+            SqlDataAdapter myCommand = new SqlDataAdapter(sc, myConnection);
+            if (myCommand.Fill(dstcom, "checkaccess") <= 0) //if there's no record on available menus, then allow it
+            {
+                if (Session[m_sCompanyName + "AccessLevel"].ToString() != GetAccessClassID("no access"))
+                    return true;
+            }
+        }
+        catch (Exception e)
+        {
+            ShowExp(sc, e);
+        }
+
+        if (dstcom.Tables["checkaccess"] != null)
+            dstcom.Tables["checkaccess"].Clear();
+
+        sc = "SELECT a.id ";
+        sc += " FROM menu_admin_access a JOIN menu_admin_id i ON i.id=a.menu ";
+        //sc += " WHERE (i.uri LIKE '" + uri + "%' OR sisters LIKE '%" + uri + "%') "; 
+        sc += " WHERE 1=1 ";
+        sc += " AND a.class=" + class_id;
+        //DEBUG("sc=", sc);
+        try
+        {
+            SqlDataAdapter myCommand = new SqlDataAdapter(sc, myConnection);
+            if (myCommand.Fill(dstcom, "checkaccess") >= 1)
+                return true;
+        }
+        catch (Exception e)
+        {
+            ShowExp(sc, e);
+        }
+        return false;
+    }
+    public static string PrintBranchOptions(string current_id)
+    {
+        return PrintBranchOptions(current_id, false);
+    }
+   public static string PrintBranchOptions(string current_id, bool bWithAll)
+    {
+        HttpRequest Request = HttpContext.Current.Request;
+        HttpResponse Response = HttpContext.Current.Response;
+        HttpSessionState Session = HttpContext.Current.Session;
+        if (dstcom.Tables["branch"] != null)
+            dstcom.Tables["branch"].Clear();
+
+        if (Session["branch_support"] != null)
+        {
+            if (current_id == null || current_id == "")
+                current_id = Session["branch_id"].ToString();
+        }
+        else
+            current_id = "1";
+        int rows = 0;
+        string s = "";
+        string sc = " SELECT id, name FROM branch ";
+        sc += " WHERE activated = 1 ";
+        //if(!bGetAllowAccessID(Session[m_sCompanyName + "AccessLevel"].ToString()))
+        if (int.Parse(Session["employee_access_level"].ToString()) < 10)
+        {
+            sc += " AND id =" + current_id + " ";
+        }
+
+        sc += " ORDER BY id ";
+        //DEBUG("sc=",sc);
+        try
+        {
+            myAdapter = new SqlDataAdapter(sc, myConnection);
+            rows = myAdapter.Fill(dstcom, "branch");
+        }
+        catch (Exception e1)
+        {
+            ShowExp(sc, e1);
+            return "";
+        }
+
+        s += "<select name=branch>";
+        if (bWithAll)
+            s += "<option value=''>All</option>";
+        for (int i = 0; i < rows; i++)
+        {
+            DataRow dr = dstcom.Tables["branch"].Rows[i];
+            string id = dr["id"].ToString();
+            string name = dr["name"].ToString();
+            s += "<option value=" + id;
+            if (id == current_id)
+                s += " selected";
+            s += ">" + name + "</option>";
+        }
+        s += "</select>";
+        return s;
+    }
+    public static bool PrintBranchNameOptions()
+    {
+        HttpRequest Request = HttpContext.Current.Request;
+        HttpResponse Response = HttpContext.Current.Response;
+        HttpSessionState Session = HttpContext.Current.Session;
+        int nBranchID = 1;
+        if (Request.Form["branch"] != null && Request.Form["branch"] != "")
+        {
+            nBranchID = int.Parse(Request.Form["branch"]);
+            Session["branch_id"] = nBranchID;
+        }
+        else if (Session["branch_id"] != null && Session["branch_id"].ToString() != "")
+        {
+            nBranchID = MyIntParse(Session["branch_id"].ToString());
+        }
+        return PrintBranchNameOptions(nBranchID.ToString());
+    }
+    public static bool PrintBranchNameOptions(string current_branch)
+    {
+        return PrintBranchNameOptions(current_branch, "", false);
+    }
+    public static bool PrintBranchNameOptions(string current_branch, string onchange_url)
+    {
+        return PrintBranchNameOptions(current_branch, onchange_url, false);
+    }
+
+    public static bool PrintBranchNameOptions(string current_branch, string onchange_url, bool bWithAll)
+    {
+        HttpRequest Request = HttpContext.Current.Request;
+        HttpResponse Response = HttpContext.Current.Response;
+        HttpSessionState Session = HttpContext.Current.Session;
+        DataSet dsBranch = new DataSet();
+        int rows = 0;
+        string sc = " SELECT b.id, b.name FROM branch b JOIN branch_cat bc ON bc.id = b.cat_id WHERE 1 = 1 ";
+        if (!bGetAllowAccessID(Session[m_sCompanyName + "AccessLevel"].ToString()))
+        {
+            sc += " AND b.id = " + current_branch + " ";
+        }
+        if (int.Parse(Session["employee_access_level"].ToString()) < 10)
+            sc += " AND b.id = " + Session["branch_id"] + " ";
+        sc += " AND b.activated = 1 ";
+        if (g_cat != "")
+            sc += " AND bc.cat = N'" + EncodeQuote(g_cat) + "' ";
+        if (g_scat != "")
+            sc += " AND bc.s_cat = N'" + EncodeQuote(g_scat) + "' ";
+        if (g_sscat != "")
+            sc += " AND bc.ss_cat = N'" + EncodeQuote(g_sscat) + "' ";
+        sc += " ORDER BY bc.cat, bc.s_cat, bc.ss_cat, b.name ";
+        //DEBUG("sc",sc);	
+        try
+        {
+            SqlDataAdapter myCommand = new SqlDataAdapter(sc, myConnection);
+            rows = myCommand.Fill(dsBranch, "branch");
+        }
+        catch (Exception e)
+        {
+            ShowExp(sc, e);
+            return false;
+        }
+
+        Response.Write("<select name=branch");
+        if (onchange_url != "")
+        {
+            Response.Write(" onchange=\"window.location=('");
+            Response.Write(onchange_url + "'+ this.options[this.selectedIndex].value ) \" ");
+        }
+        Response.Write(">");
+        if (bWithAll)
+        {
+            //if(Session[m_sCompanyName + "AccessLevel"].ToString() == "10")
+            //if(bGetAllowAccessID(Session[m_sCompanyName + "AccessLevel"].ToString()))
+            if (int.Parse(Session["employee_access_level"].ToString()) == 10)
+                Response.Write("<option value=0>All Branches</option>");
+        }
+        for (int i = 0; i < rows; i++)
+        {
+            string bname = dsBranch.Tables["branch"].Rows[i]["name"].ToString();
+            string bid = dsBranch.Tables["branch"].Rows[i]["id"].ToString();
+            Response.Write("<option value='" + bid + "' ");
+            if (bid == current_branch)
+                Response.Write("selected");
+            Response.Write(">" + bname + "</option>");
+        }
+        if (rows == 0)
+            Response.Write("<option value=1>Branch 1</option>");
+        Response.Write("</select>");
+        return true;
+    }
+    public static string GetEnumValue(string sClass, string id)
+    {
+    
+        HttpResponse Response = HttpContext.Current.Response;
+     
+        if (id == "")
+        {
+            Response.Write("Empty ID, class=" + sClass);
+            return "";
+        }
+
+        DataSet dsEnum = new DataSet();
+        string sValue = "";
+        string sc = "SELECT name FROM enum WHERE class='" + sClass + "' AND id=" + id;
+        try
+        {
+            myAdapter = new SqlDataAdapter(sc, myConnection);
+            if (myAdapter.Fill(dsEnum, "enum") == 1)
+                sValue = dsEnum.Tables["enum"].Rows[0]["name"].ToString();
+        }
+        catch (Exception e)
+        {
+            ShowExp(sc, e);
+        }
+        return sValue;
+    }
+    public static bool bGetAllowAccessID(string sUserAccessID)
+    {
+        return bGetAllowAccessID(sUserAccessID, "");
+    }
+    public static bool bGetAllowAccessID(string sUserAccessID, string sAllowID)
+    {
+        if (sUserAccessID == "10")
+            return true;
+        string AllowAccessID = "";
+        if (sAllowID != "")
+            AllowAccessID = sAllowID;
+        else
+            AllowAccessID = GetSiteSettings("SET_ALLOW_ACCESS_ID_FOR_CARD_AND_OTHER_SECURITIES", "10,", true);
+        //DEBUG("allowe =", AllowAccessID);	
+        string sTemp = "";
+
+        for (int i = 0; i < AllowAccessID.Length; i++)
+        {
+            if (AllowAccessID[i].ToString() == "," || AllowAccessID[i].ToString() == "|" || AllowAccessID[i].ToString() == ";")
+            {
+                if (sUserAccessID == sTemp)
+                    return true;
+                else
+                    sTemp = ""; //clean up last id
+            }
+            if (AllowAccessID[i].ToString() != "," || AllowAccessID[i].ToString() != "|" || AllowAccessID[i].ToString() != ";")
+            {
+                try
+                {
+                    sTemp += (int.Parse(AllowAccessID[i].ToString())).ToString();
+                }
+                catch (Exception e) { }
+            }
+            if (i == AllowAccessID.Length - 1)
+            {
+                if (sUserAccessID == sTemp)
+                    return true;
+            }
+
+        }
+        return false;
+    }
+
+    public static string GetAccessClassID(string name)
+    {
+        if (dstcom.Tables["getclassid"] != null)
+            dstcom.Tables["getclassid"].Clear();
+
+        string sc = " SELECT id FROM menu_access_class WHERE name='" + name + "'";
+        try
+        {
+            SqlDataAdapter myCommand = new SqlDataAdapter(sc, myConnection);
+            if (myCommand.Fill(dstcom, "getclassid") == 1)
+                return dstcom.Tables["getclassid"].Rows[0]["id"].ToString();
+        }
+        catch (Exception e)
+        {
+            ShowExp(sc, e);
+        }
+        return name;
+    }
     public static void BackToLastPage()
     {
         string url;
@@ -519,5 +906,50 @@ public  class Common
                 }
             }
         }
+    }
+  public static  bool SecurityCheck(string sLevel)
+    {
+        HttpRequest Request = HttpContext.Current.Request;
+        HttpResponse Response = HttpContext.Current.Response;
+        HttpSessionState Session = HttpContext.Current.Session;
+        if (sLevel == "normal")
+        {
+            if (!TS_UserLoggedIn())
+            {
+                RememberLastPage();
+                Response.Redirect("login.aspx");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        return Common.SecurityCheck(sLevel, true);
+    }
+   public static bool SecurityCheck(string sLevel, bool bSayNo)
+    {
+        HttpRequest Request = HttpContext.Current.Request;
+        HttpResponse Response = HttpContext.Current.Response;
+        HttpSessionState Session = HttpContext.Current.Session;
+        if (!TS_UserLoggedIn())
+        {
+            if (!bSayNo)
+                return false;
+            RememberLastPage();
+            Response.Redirect("login.aspx");
+            return false;
+        }
+
+     
+
+        if (Common.CheckAccess(Session[m_sCompanyName + "AccessLevel"].ToString()))
+            return true;
+        else if (bSayNo)
+        {
+            Response.Write("<h3>ACCESS DENIED1</h3>");
+            Response.End();
+        }
+        return false;
     }
 }

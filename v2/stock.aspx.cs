@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -7,6 +9,7 @@ using System.Web.UI.WebControls;
 
 public partial class v2_stock : System.Web.UI.Page
 {
+    DataSet dst = new DataSet();
     string m_id = "";
     string m_name = "";
     string m_sBranch = "";
@@ -226,8 +229,9 @@ public partial class v2_stock : System.Web.UI.Page
     void BindStockQty()
     {
 
-        Response.Write("<table width='" + tableWidth + "' align=center cellspacing=0 cellpadding=2 border=1 bordercolor=#EEEEEE bgcolor=white");
-        Response.Write(" style=\"font-family:Verdana;font-size:8pt;border-width:1px;border-style:Solid;border-collapse:collapse;fixed\">");
+        //Response.Write("<table width='" + tableWidth + "' align=center cellspacing=0 cellpadding=2 border=1 bordercolor=#EEEEEE bgcolor=white");
+        Response.Write("<table class='table table-hover text-nowrap'>");
+        //Response.Write(" style=\"font-family:Verdana;font-size:8pt;border-width:1px;border-style:Solid;border-collapse:collapse;fixed\">");
         //Response.Write("<tr style=\"color:white;background-color:#666696;font-weight:bold;\">");
         //Response.Write("<tr bgcolor=#E3E3E3><td align=center colspan=2>Stock Quantity Table</td></tr>");
         //Response.Write("<br><hr size=1 color=black>");
@@ -315,7 +319,7 @@ public partial class v2_stock : System.Web.UI.Page
         Response.Write(" title='Click to sort by Description' class=o>DESCRIPTION</a></th>");
         if (Session["branch_support"] != null)
         {
-            if (g_bRetailVersion)
+            if (Common.g_bRetailVersion)
             {
                 Response.Write("<th align=left>BRANCH</th>");
             }
@@ -350,7 +354,7 @@ public partial class v2_stock : System.Web.UI.Page
             string barcode = dr["barcode"].ToString();
             string sales = dr["sales"].ToString();
             string branch_name = "";
-            if (g_bRetailVersion)
+            if (Common.g_bRetailVersion)
                 branch_name = dr["branch_name"].ToString();
             Response.Write("<tr");
             if (alterColor)
@@ -376,15 +380,11 @@ public partial class v2_stock : System.Web.UI.Page
             Response.Write("</td>\r\n");
             */
             Response.Write("<td>");
-            Response.Write("<table border=0><tr>");
-            Response.Write("<td><a title='click here to view Sales Ref:' href='salesref.aspx?code=" + code + "' class=o target=_new>");
+       
+            Response.Write("<a title='click here to view Sales Ref:' href='salesref.aspx?code=" + code + "' class=o target=_new>");
             Response.Write("" + barcode + "");
             Response.Write("</a> ");
-            Response.Write("</td>");
-            Response.Write("<td width=11%>");
-            //	Response.Write("<input type=button title='View Sales History' onclick=\"javascript:viewsales_window=window.open('viewsales.aspx?");
-            //	Response.Write("code=" + code + "','','width=500,height=500');\" value='S' " + Session["button_style"] + ">");
-            Response.Write("</td></tr></table>");
+      
             Response.Write("</td>");
             Response.Write("<td>");
             Response.Write("" + s_product_code + "");
@@ -397,13 +397,13 @@ public partial class v2_stock : System.Web.UI.Page
             Response.Write("<td width=40%>" + s_description + "</td>");
             if (Session["branch_support"] != null)
             {
-                if (g_bRetailVersion)
+                if (Common.g_bRetailVersion)
                     Response.Write("<td>" + branch_name + "</td>");
             }
             Response.Write("<td align=center><font color=");
             if (s_qty == "")
                 s_qty = "999999";
-            double q = MyDoubleParse(s_qty);
+            double q = Common.MyDoubleParse(s_qty);
             if (q == 0)
                 Response.Write("black");
             else if (q < 0)
@@ -428,6 +428,139 @@ public partial class v2_stock : System.Web.UI.Page
         Response.Write("</table>");
 
     }
+    bool DoItemOption()
+    {
+        int rows = 0;
+        string sc = "SELECT DISTINCT cat FROM product p  ORDER BY cat";
+        try
+        {
+            Common.myAdapter = new SqlDataAdapter(sc,Common.myConnection);
+            rows = Common.myAdapter.Fill(dst, "cat");
+            //DEBUG("rows=", rows);
+        }
+        catch (Exception e)
+        {
+            Common.ShowExp(sc, e);
+            return false;
+        }
+        string qtyp = "";
+        if (Request.QueryString["qtyp"] != "" && Request.QueryString["qtyp"] != null)
+            qtyp = Request.QueryString["qtyp"].ToString();
+        if (rows <= 0)
+            return true;
+        Response.Write("Catalog Select: <select name=s ");
+        Response.Write(" onchange=\"window.location=('" + Request.ServerVariables["URL"] + "?r=" + DateTime.Now.ToOADate() + "&s=" + sSystem + "&op=" + sOption + "");
+        if (m_branchid != "")
+            Response.Write("&b=" + m_branchid + "");
+        Response.Write("&id=" + ra_id + "&ra=" + ra_code + "&qtyp=" + qtyp + "&cat='+this.options[this.selectedIndex].value)\"");
+        Response.Write(">");
+        Response.Write("<option value='all'>Show All</option>");
+        if (Request.QueryString["cat"] != null && Request.QueryString["cat"] != "")
+            cat = Request.QueryString["cat"].ToString();
+        for (int i = 0; i < rows; i++)
+        {
+            DataRow dr = dst.Tables["cat"].Rows[i];
+            string s = dr["cat"].ToString();
+            if (cat.ToUpper() == s.ToUpper())
+                Response.Write("<option value='" + HttpUtility.UrlEncode(s) + "' selected>" + s + "</option>");
+            else
+                Response.Write("<option value='" + HttpUtility.UrlEncode(s) + "'>" + s + "</option>");
+
+        }
+
+        Response.Write("</select>");
+
+        if (Request.QueryString["cat"] != null && Request.QueryString["cat"] != "")
+        {
+            cat = Request.QueryString["cat"].ToString();
+
+            sc = "SELECT DISTINCT s_cat FROM product  WHERE cat = N'" + cat + "' ";
+            sc += " ORDER BY s_cat";
+            try
+            {
+                Common.myAdapter = new SqlDataAdapter(sc, Common.myConnection);
+                rows = Common.myAdapter.Fill(dst, "s_cat");
+                //DEBUG("rows=", rows);
+            }
+            catch (Exception e)
+            {
+                Common.ShowExp(sc, e);
+                return false;
+            }
+
+            if (rows <= 0)
+                return true;
+            Response.Write("<select name=s ");
+            Response.Write(" onchange=\"window.location=('" + Request.ServerVariables["URL"] + "?ra=" + ra_code + "&s=" + sSystem + "");
+            if (m_branchid != "")
+                Response.Write("&b=" + m_branchid + "");
+            Response.Write("&op=" + sOption + "&id=" + ra_id + "&cat=" + HttpUtility.UrlEncode(cat) + "&r=" + DateTime.Now.ToOADate() + "&qtyp=" + qtyp + "&s_cat='+this.options[this.selectedIndex].value)\"");
+            Response.Write(">");
+            Response.Write("<option value='all'>Show All</option>");
+            if (Request.QueryString["s_cat"] != null && Request.QueryString["s_cat"] != "")
+                s_cat = Request.QueryString["s_cat"].ToString();
+            for (int i = 0; i < rows; i++)
+            {
+                DataRow dr = dst.Tables["s_cat"].Rows[i];
+                string s = dr["s_cat"].ToString();
+                //DEBUG(" s = ", s);
+                //DEBUG(" scat = ", s_cat);
+                if (s_cat.ToUpper() == s.ToUpper())
+                    Response.Write("<option value='" + HttpUtility.UrlEncode(s) + "' selected>" + s + "</option>");
+                else
+                    Response.Write("<option value='" + HttpUtility.UrlEncode(s) + "'>" + s + "</option>");
+            }
+
+            Response.Write("</select>");
+        }
+
+        if (Request.QueryString["s_cat"] != null && Request.QueryString["s_cat"] != "")
+        {
+            s_cat = Request.QueryString["s_cat"].ToString();
+            cat = Request.QueryString["cat"].ToString();
+            sc = "SELECT DISTINCT ss_cat FROM product p WHERE cat = N'" + cat + "' ";
+            sc += " AND s_cat = N'" + s_cat + "' ";
+            sc += " ORDER BY ss_cat";
+            try
+            {
+               Common.myAdapter = new SqlDataAdapter(sc, Common.myConnection);
+                rows = Common.myAdapter.Fill(dst, "ss_cat");
+                //DEBUG("rows=", rows);
+            }
+            catch (Exception e)
+            {
+                Common.ShowExp(sc, e);
+                return false;
+            }
+            if (rows <= 0)
+                return true;
+            Response.Write("<select name=s ");
+            Response.Write(" onchange=\"window.location=('" + Request.ServerVariables["URL"] + "?ra=" + ra_code + "");
+            if (m_branchid != "")
+                Response.Write("&b=" + m_branchid + "");
+            Response.Write("&s=" + sSystem + "&op=" + sOption + "&id=" + ra_id + "&cat=");
+            Response.Write(HttpUtility.UrlEncode(cat) + "&r=" + DateTime.Now.ToOADate() + "&qtyp=" + qtyp + "&s_cat=");
+            Response.Write(HttpUtility.UrlEncode(s_cat) + "&ss_cat='+this.options[this.selectedIndex].value)\"");
+            Response.Write(">");
+            if (Request.QueryString["ss_cat"] != null && Request.QueryString["ss_cat"] != "")
+                ss_cat = Request.QueryString["ss_cat"].ToString();
+
+            Response.Write("<option value='all'>Show All</option>");
+            for (int i = 0; i < rows; i++)
+            {
+                DataRow dr = dst.Tables["ss_cat"].Rows[i];
+                string s = dr["ss_cat"].ToString();
+
+                if (ss_cat.ToUpper() == s.ToUpper())
+                    Response.Write("<option value='" + HttpUtility.UrlEncode(s) + "' selected>" + s + "</option>");
+                else
+                    Response.Write("<option value='" + HttpUtility.UrlEncode(s) + "'>" + s + "</option>");
+            }
+
+            Response.Write("</select>");
+        }
+        return true;
+    }
     bool GetStockQty()
     {
         string sc = " SELECT p.supplier_code, p.code, CONVERT(varchar(60), p.name) AS name, p.barcode ";
@@ -435,13 +568,13 @@ public partial class v2_stock : System.Web.UI.Page
         sc += " WHERE s.code = p.code AND sq.branch_id = i.branch ";
         sc += "), 0) AS sales ";
 
-        //	if(g_bRetailVersion)
+        //	if(Common.g_bRetailVersion)
         sc += ", ISNULL(sq.qty,0) AS stock , br.name AS branch_name ";
         //	else
         //		sc += ", p.stock ";
         //	sc += " FROM product p ";
         sc += " FROM code_relations p ";
-        //	if(g_bRetailVersion)
+        //	if(Common.g_bRetailVersion)
         {
             sc += " JOIN stock_qty sq ON sq.code = p.code ";
             sc += " JOIN branch br ON br.id = sq.branch_id AND br.activated = 1 ";
@@ -474,7 +607,7 @@ public partial class v2_stock : System.Web.UI.Page
         //	}
         if (m_branchid != "" && m_branchid != "all")
         {
-            //		if(g_bRetailVersion)
+            //		if(Common.g_bRetailVersion)
             sc += " AND sq.branch_id = " + m_branchid + " ";
         }
 
@@ -515,13 +648,13 @@ public partial class v2_stock : System.Web.UI.Page
         //DEBUG("sc=", sc);
         try
         {
-            myAdapter = new SqlDataAdapter(sc, myConnection);
-            myAdapter.Fill(dst, "stock_qty");
+            Common.myAdapter = new SqlDataAdapter(sc, Common.myConnection);
+            Common.myAdapter.Fill(dst, "stock_qty");
 
         }
         catch (Exception e)
         {
-            ShowExp(sc, e);
+            Common.ShowExp(sc, e);
             return false;
         }
         if (ra_code != "" && ra_code != null)
@@ -548,15 +681,16 @@ public partial class v2_stock : System.Web.UI.Page
 
         try
         {
-            myCommand = new SqlCommand(sc);
-            myCommand.Connection = myConnection;
-            myConnection.Open();
-            myCommand.ExecuteNonQuery();
-            myCommand.Connection.Close();
+
+            Common.myCommand = new SqlCommand(sc);
+            Common.myCommand.Connection = Common.myConnection;
+            Common.myConnection.Open();
+            Common.myCommand.ExecuteNonQuery();
+            Common.myCommand.Connection.Close();
         }
         catch (Exception e)
         {
-            ShowExp(sc, e);
+            Common.ShowExp(sc, e);
             return false;
         }
 
@@ -574,15 +708,15 @@ public partial class v2_stock : System.Web.UI.Page
         sc += " WHERE id = " + m_snQuery + "";
         try
         {
-            myCommand = new SqlCommand(sc);
-            myCommand.Connection = myConnection;
-            myConnection.Open();
-            myCommand.ExecuteNonQuery();
-            myCommand.Connection.Close();
+            Common.myCommand = new SqlCommand(sc);
+            Common.myCommand.Connection = Common.myConnection;
+            Common.myConnection.Open();
+            Common.myCommand.ExecuteNonQuery();
+            Common.myCommand.Connection.Close();
         }
         catch (Exception e)
         {
-            ShowExp(sc, e);
+            Common.ShowExp(sc, e);
             return false;
         }
         return true;
@@ -610,7 +744,7 @@ public partial class v2_stock : System.Web.UI.Page
             string s_quantity = dr["qty"].ToString();
             string s_prod_desc = dr["name"].ToString();
             string s_branch_name = "";
-            if (g_bRetailVersion)
+            if (Common.g_bRetailVersion)
                 s_branch_name = dr["branch_name"].ToString();
             string price = dr["price"].ToString();
             double dPrice = 0;
@@ -625,7 +759,7 @@ public partial class v2_stock : System.Web.UI.Page
             Response.Write("code=" + s_product_code + "','','width=500,height=500');\" value='S' " + Session["button_style"] + ">");
             Response.Write("<th>" + s_supplier_code + "</th>");
             Response.Write("<td>" + s_prod_desc + "</td>");
-            if (g_bRetailVersion)
+            if (Common.g_bRetailVersion)
                 Response.Write("<td>" + s_branch_name + "</td>");
             if (int.Parse(s_quantity) == 0)
                 Response.Write("<td><b>" + s_quantity + "</b></td>");
@@ -638,14 +772,33 @@ public partial class v2_stock : System.Web.UI.Page
         }
         Response.Write("</table>");
     }
-
+    string msgEncode(string s)
+    {
+        if (s == null)
+            return null;
+        string ss = "";
+        for (int i = 0; i < s.Length; i++)
+        {
+            if (s[i] == '\'')
+                ss += "\'\'"; //double it for SQL query
+            else if (s[i] == '<')
+                ss += '[';
+            else if (s[i] == '>')
+                ss += ']';
+            //		else if(s[i] == '\n')
+            //			ss += s[i] + "<br>";
+            else
+                ss += s[i];
+        }
+        return ss;
+    }
     bool SearchSNQty(string sSearchSN)
     {
         string sc = "";
         sSearchSN = msgEncode(sSearchSN);
-        //DEBUG("g_bRetailVersion =", g_bRetailVersion.ToString());
+        //DEBUG("Common.g_bRetailVersion =", Common.g_bRetailVersion.ToString());
         //DEBUG(" sSEarch = ", sSearchSN);
-        /*if(g_bRetailVersion)
+        /*if(Common.g_bRetailVersion)
         {
             sc = " SELECT sq.id, sq.code, sq.qty, CONVERT(varchar(50),pd.name) AS name, pd.price ";
             sc += " FROM stock_qty sq INNER JOIN product pd ON sq.code = pd.code";
@@ -658,7 +811,7 @@ public partial class v2_stock : System.Web.UI.Page
         */
         //{
         sc = " SELECT DISTINCT st.sn, pi.code, c.supplier_code,  CONVERT(varchar(60), pi.name) AS name ";
-        if (g_bRetailVersion)
+        if (Common.g_bRetailVersion)
             sc += ", ISNULL(sq.qty,0) AS qty, br.name AS branch_name ";
         else
             sc += ", pd.stock AS qty ";
@@ -670,7 +823,7 @@ public partial class v2_stock : System.Web.UI.Page
         sc += " JOIN purchase_item pi ON st.purchase_order_id = pi.id AND pi.id = p.id ";
         sc += " JOIN product pd ON pd.code = pi.code AND st.product_code = pi.code AND st.product_code = pd.code ";
         //		sc += " JOIN code_relations c ON c.code = pd.code AND c.code = pi.code AND c.code = st.product_code ";
-        //		if(g_bRetailVersion)
+        //		if(Common.g_bRetailVersion)
         {
             sc += " JOIN stock_qty sq ON sq.code = pd.code AND pi.code = sq.code ";
             sc += " JOIN branch br ON br.id = sq.branch_id AND br.activated = 1 ";
@@ -679,7 +832,7 @@ public partial class v2_stock : System.Web.UI.Page
 
         if (m_branchid != "" && m_branchid != "all")
         {
-            if (g_bRetailVersion)
+            if (Common.g_bRetailVersion)
                 sc += " AND sq.branch_id = " + m_branchid + " ";
         }
 
@@ -688,8 +841,8 @@ public partial class v2_stock : System.Web.UI.Page
         //DEBUG("sc = ", sc);	
         try
         {
-            myAdapter = new SqlDataAdapter(sc, myConnection);
-            int i = myAdapter.Fill(dst, "snQty");
+            Common.myAdapter = new SqlDataAdapter(sc, Common.myConnection);
+            int i = Common.myAdapter.Fill(dst, "snQty");
             //DEBUG( "i = ", i );
 
         }
@@ -702,25 +855,60 @@ public partial class v2_stock : System.Web.UI.Page
 				";
                 try
                 {
-                    myCommand = new SqlCommand(sc);
-                    myCommand.Connection = myConnection;
-                    myCommand.Connection.Open();
-                    myCommand.ExecuteNonQuery();
-                    myCommand.Connection.Close();
+                    Common.myCommand = new SqlCommand(sc);
+                    Common.myCommand.Connection = Common.myConnection;
+                    Common.myCommand.Connection.Open();
+                    Common.myCommand.ExecuteNonQuery();
+                    Common.myCommand.Connection.Close();
                 }
                 catch (Exception e2)
                 {
-                    ShowExp(sc, e2);
+                    Common.ShowExp(sc, e2);
                 }
             }
-            ShowExp(sc, e);
+            Common.ShowExp(sc, e);
             return false;
         }
 
 
         return true;
     }
+    bool DrawRowSearch(DataRow dr, int i, bool alterColor)
+    {
+        string s_prodcode = dr["code"].ToString();
+        string s_supplier_code = dr["supplier_code"].ToString();
+        string s_barcode = dr["barcode"].ToString();
+        string s_cost = dr["price"].ToString();
+        string s_desc = dr["name"].ToString();
+        string s_qty = dr["qty"].ToString();
+        string s_sid = dr["id"].ToString();
+        string s_branch_name = "";
+        if (Common.g_bRetailVersion)
+            s_branch_name = dr["branch_name"].ToString();
+        Response.Write("<tr");
+        if (alterColor)
+            Response.Write(" bgcolor=#EEEEEE");
+        Response.Write(">");
 
+        Response.Write("<tr>");
+        //Response.Write("<td>"+s_prodcode+"</td>");
+        Response.Write("<th><a title='click here to view the sales reference' href='salesref.aspx?code=" + s_prodcode + "' target=_blank class=o>" + s_barcode + "</a> ");
+        Response.Write("<input type=button title='View Sales History' onclick=\"javascript:viewsales_window=window.open('viewsales.aspx?");
+        Response.Write("code=" + s_prodcode + "','','width=500,height=500');\" value='S' " + Session["button_style"] + ">");
+        Response.Write("</th><th>" + s_supplier_code + "</th> ");
+        Response.Write("<td>" + s_desc + "</td>");
+        if (Common.g_bRetailVersion)
+            Response.Write("<td>" + s_branch_name + "</td>");
+        if (int.Parse(s_qty) == 0)
+            Response.Write("<td><font color=black>" + s_qty + "</font></td>");
+        else if (int.Parse(s_qty) < 0)
+            Response.Write("<td><font color=red>" + s_qty + "</font></td>");
+        else if (int.Parse(s_qty) > 0)
+            Response.Write("<td><font color=green><b>" + s_qty + "</b></font></td>");
+
+        Response.Write("<td>" + double.Parse(s_cost).ToString("c") + "</td>");
+        return true;
+    }
     void GetSearch()
     {
         Response.Write("<script language=javascript>");
@@ -861,7 +1049,7 @@ public partial class v2_stock : System.Web.UI.Page
         sc += " ORDER BY id";
         try
         {
-            SqlDataAdapter myCommand = new SqlDataAdapter(sc, myConnection);
+            SqlDataAdapter myCommand = new SqlDataAdapter(sc, Common.myConnection);
             rows = myCommand.Fill(dsBranch, "branch");
         }
         catch (Exception e)
@@ -873,18 +1061,18 @@ public partial class v2_stock : System.Web.UI.Page
 				";
                 try
                 {
-                    myCommand = new SqlCommand(sc);
-                    myCommand.Connection = myConnection;
-                    myCommand.Connection.Open();
-                    myCommand.ExecuteNonQuery();
-                    myCommand.Connection.Close();
+                    Common.myCommand = new SqlCommand(sc);
+                    Common.myCommand.Connection = Common.myConnection;
+                    Common.myCommand.Connection.Open();
+                    Common.myCommand.ExecuteNonQuery();
+                    Common.myCommand.Connection.Close();
                 }
                 catch (Exception e2)
                 {
-                    ShowExp(sc, e2);
+                    Common.ShowExp(sc, e2);
                 }
             }
-            ShowExp(sc, e);
+            Common.ShowExp(sc, e);
             return false;
         }
 
@@ -911,7 +1099,7 @@ public partial class v2_stock : System.Web.UI.Page
             string bname = dsBranch.Tables["branch"].Rows[i]["name"].ToString();
             int bid = int.Parse(dsBranch.Tables["branch"].Rows[i]["id"].ToString());
             Response.Write("<option value='" + bid + "' ");
-            if (IsInteger(m_branchid))
+            if (Common.IsInteger(m_branchid))
             {
                 if (bid == int.Parse(m_branchid))
                     Response.Write("selected");
@@ -947,13 +1135,13 @@ public partial class v2_stock : System.Web.UI.Page
         }
 
         string sc = " SELECT p.supplier + p.supplier_code AS ID, p.supplier_code, p.code, c.barcode ";
-        if (g_bRetailVersion)
+        if (Common.g_bRetailVersion)
             sc += ", ISNULL(sq.qty,0) AS qty , br.name AS branch_name ";
         else
             sc += " , p.stock AS qty ";
         sc += " , CONVERT(varchar(50),p.name) AS name, c.price1 AS price ";
         sc += " FROM product p JOIN code_relations c ON c.code = p.code ";
-        //	if(g_bRetailVersion)
+        //	if(Common.g_bRetailVersion)
         {
             sc += " JOIN stock_qty sq ON sq.code = p.code ";
             sc += " JOIN branch br ON br.id = sq.branch_id AND br.activated = 1 ";
@@ -975,15 +1163,15 @@ public partial class v2_stock : System.Web.UI.Page
 
         if (m_branchid != "" && m_branchid != "all")
         {
-            if (g_bRetailVersion)
+            if (Common.g_bRetailVersion)
                 sc += " AND sq.branch_id = " + m_branchid + " ";
         }
   
         try
         {
-            myAdapter = new SqlDataAdapter(sc, myConnection);
+            Common.myAdapter = new SqlDataAdapter(sc, Common.myConnection);
         
-            m_RowsReturn = myAdapter.Fill(dst, "searchQty");
+            m_RowsReturn = Common.myAdapter.Fill(dst, "searchQty");
 
  
         }
@@ -996,18 +1184,18 @@ public partial class v2_stock : System.Web.UI.Page
 				";
                 try
                 {
-                    myCommand = new SqlCommand(sc);
-                    myCommand.Connection = myConnection;
-                    myCommand.Connection.Open();
-                    myCommand.ExecuteNonQuery();
-                    myCommand.Connection.Close();
+                    Common.myCommand = new SqlCommand(sc);
+                    Common.myCommand.Connection = Common.myConnection;
+                    Common.myCommand.Connection.Open();
+                    Common.myCommand.ExecuteNonQuery();
+                    Common.myCommand.Connection.Close();
                 }
                 catch (Exception e2)
                 {
-                    ShowExp(sc, e2);
+                    Common.ShowExp(sc, e2);
                 }
             }
-            ShowExp(sc, e);
+            Common.ShowExp(sc, e);
             return false;
         }
 

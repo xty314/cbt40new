@@ -12,7 +12,7 @@ public class DBhelper
 {
     
     private SqlConnection DBhelperConnection;
- 
+    
    private SqlConnectionStringBuilder connbuilder = new SqlConnectionStringBuilder();
     
 

@@ -1,6 +1,7 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="template.aspx.cs" Inherits="v2_template" MasterPageFile="~/MasterPage/MasterPage.master" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="ebutton.aspx.cs" Inherits="v2_ebutton" MasterPageFile="~/MasterPage/MasterPage.master" %>
 
-<%--注意加入MasterPageFile--%>
+
+
 
 <%@ Register Src="~/MasterPage/layout/ContentHeader.ascx" TagPrefix="uc1" TagName="ContentHeader" %>
 <%--<%@Import Namespace="System.Data.SqlClient" %>
@@ -18,7 +19,11 @@
 <asp:Content ContentPlaceHolderId="Content" runat="server">
 
   <!-- Main content -->
-
+ 
+    <section class="content">
+         <%PrintPage(); %>
+    </section>
+  
  <!-- /.content -->
 </asp:Content>
 <asp:Content ContentPlaceHolderId="AdditionalJS" runat="server">
